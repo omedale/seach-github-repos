@@ -1,0 +1,36 @@
+<h2> Search Github public repositories </h2>
+<%= form_tag("/githubs/index", method: "get") do %>
+  <%= label_tag(:q, "Search by name:") %>
+  <%= text_field_tag(:q, params[:q]) %>
+  <%= submit_tag("Search") %>
+<% end %>
+<table>
+  <% if @result %>
+    <h3> Repositories </h3>
+    <% if @result.success? %>
+      <% if @result.payload['items'].count.positive? %>
+        <tr>
+            <th>Username</th>
+            <th>Repo name</th>
+            <th>Repo url</th>
+        </tr>
+        <% @result.payload['items'].each do |item| %> 
+          <tr>
+              <th><%= item['full_name'].split('/').first %></th>
+              <th><%= item['name'] %></th>
+              <th> <a href="<%= item['owner']['repos_url'] %>" > <%= item['owner']['repos_url'] %> </a> </th>
+          </tr>
+        <% end %>
+      <% else %>
+        <p> No item found </p>
+      <% end %>
+    <% else %>
+      <p> <%= @result.error %> </p>
+    <% end %>
+    <div>
+      <strong> Page <%= params[:page] || 1 %> of <%=  @result.payload['total_count'] %> </strong> | 
+      <%= link_to "Prev", githubs_index_path(:params => current_page_params.merge(page: @prev_page)) %> |
+      <%= link_to "Next", githubs_index_path(:params => current_page_params.merge(page: @next_page)) %>
+    </div>
+  <% end %>
+</table>
