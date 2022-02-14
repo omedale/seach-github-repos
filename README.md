@@ -5,3 +5,7 @@
 
 ## Start
   `rails s`
+
+
+## Test
+  `rails test`
